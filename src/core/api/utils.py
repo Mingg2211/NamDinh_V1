@@ -55,7 +55,7 @@ def remove_dup(result_list):
     return list(dict.fromkeys(result_list))
 
 def search_in_database(user_token):
-    df = pd.read_csv('/media/ba/N_Vol/ubuntu/NamDinh_V1/data/new_procedure.csv')
+    df = pd.read_csv(DATA_CSV)
     procedures = df[df.procedure_name.str.contains(user_token, na=False)]
     # flatten 2d list
     procedure_list = list(chain.from_iterable(procedures.values.tolist()))
@@ -63,7 +63,7 @@ def search_in_database(user_token):
     return procedure_list
 
 def ranking_result(user_sent:str):
-    values_dict = load_dict_values('/media/ba/N_Vol/ubuntu/NamDinh_V1/data/procedure.txt')
+    values_dict = load_dict_values(DATA_TXT)
     best_matching = find_best_matching_in_dict(user_sent, values_dict)
     user_tokens = word_tokenize(user_sent)
     tmp =[]
