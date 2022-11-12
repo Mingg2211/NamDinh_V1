@@ -20,5 +20,5 @@ class Item(BaseModel):
 
 @app.post("/ranking-utter")
 def ranking_utter(item: Item):
-    result = ranking_result(item.value)
+    result = ranking_result(item.value.lower().replace('thủ tục',''))
     return {"ranked_uter": result}
