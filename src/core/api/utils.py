@@ -2,7 +2,8 @@ import pandas as pd
 from itertools import chain
 import regex as re
 from underthesea import word_tokenize
-from src.core.api.config import * 
+from src.core.api.config import *
+
 
 def load_dict_values(dict_file):
     fin = open(dict_file, 'r', encoding='utf-8')
@@ -17,6 +18,7 @@ def load_dict_values(dict_file):
             words = items[0].lower().split()
             values_dict.append((words, items[1]))
     return values_dict
+
 
 def lcs(X, Y):
     # find the length of the strings
@@ -40,6 +42,7 @@ def lcs(X, Y):
 
     return L[m][n]
 
+
 def find_best_matching_in_dict(query, values_dict):
     query_words = query.lower().split()
     max_ratio = 0
@@ -51,8 +54,10 @@ def find_best_matching_in_dict(query, values_dict):
             str_found = v
     return str_found
 
+
 def remove_dup(result_list):
     return list(dict.fromkeys(result_list))
+
 
 def search_in_database(user_token):
     df = pd.read_csv(DATA_CSV)
@@ -62,11 +67,12 @@ def search_in_database(user_token):
     procedure_list = sorted(procedure_list, key=len)
     return procedure_list
 
-def ranking_result(user_sent:str):
+
+def ranking_result(user_sent: str):
     values_dict = load_dict_values(DATA_TXT)
     best_matching = find_best_matching_in_dict(user_sent, values_dict)
     user_tokens = word_tokenize(user_sent)
-    tmp =[]
+    tmp = []
     for token in user_tokens:
         tmp += search_in_database(token)
     unique_list = []
@@ -81,20 +87,20 @@ def ranking_result(user_sent:str):
         if element in unique_list:
             unique_list.remove(element)
     if len(dup_list) == 0:
-        return unique_list[:5]
-    elif len(dup_list) <5 :
-        n = 5 - len(dup_list)
+        return unique_list[:3]
+    elif len(dup_list) < 3:
+        n = 3 - len(dup_list)
         if best_matching:
             result = [best_matching] + dup_list + unique_list[:10]
             result = remove_dup(result)
-            return result[:5]
-        else :
-            result = dup_list + unique_list[:5-n]
-            return result[:5]
+            return result[:3]
+        else:
+            result = dup_list + unique_list[:3-n]
+            return result[:3]
     else:
         if best_matching in dup_list:
             result = [best_matching] + dup_list
             result = remove_dup(result)
-            return result[:5]
+            return result[:3]
         else:
-            return dup_list[:5]
+            return dup_list[:3]
