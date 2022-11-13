@@ -5,6 +5,47 @@ from underthesea import word_tokenize
 from src.core.api.config import *
 
 
+def look_up_in_domain(token):
+    look_up_dict = {"ô tô":["ô tô","oto"],
+                    "kết hôn":["kết hôn","cưới"],
+                    "photocopy":["photocopy","photo"],
+                    "di dời":["di dời","dời đi"],
+                    "huy chương":["huy chương","huân chương"],
+                    "toàn bộ":["toàn bộ","tất cả"],
+                    "đăng ký kết hôn":["đăng ký kết hôn","đăng ký hôn nhân"," đăng ký cưới xin"," đăng ký cưới"," đăng kí cưới"," đăng kí cưới xin"," đăng ký hôn nhân"],
+                    "du học":["du học","học nước ngoài"," đi  học nước ngoài"],
+                    "thuế":["thuế","thuế má"],
+                    "thức ăn":["thức ăn","đồ ăn"],
+                    "con đẻ":["con đẻ","con ruột"],
+                    "bất động sản":["bất động sản","địa ốc"],
+                    "thương lượng":["thương lượng","đàm phán"],
+                    "chặt hạ":["chặt hạ","đốn hạ"],
+                    "luồng lạch":["luồng lạch","luồn lách"],
+                    "cơ sở vật chất":["cơ sở vật chất","csvc"],
+                    "khoa học xã hội":["khoa học xã hội","khxh"],
+                    "công khai":["công khai","công bố"],
+                    "hôn nhân":["hôn nhân","hôn lễ"],
+                    "hoãn":["hoãn","trì hoãn"],
+                    "nhà đất":["nhà đất","nhà ở và đất đai"],
+                    "tiền lương":["tiền lương","lương"],
+                    "đầu tư sản xuất":["đầu tư sản xuất","đầu tư sx"],
+                    "chứng khoán":["chứng khoán","chung khoan"],
+                    "nông lâm":["nông lâm","lâm nông"],
+                    "lao động-thương binh":["lao động-thương binh","lđtb"],
+                    "an toàn lao động":["an toàn lao động","atlđ"],
+                    "trực tuyến":["trực tuyến","online"],
+                    "tố tụng":["tố tụng","tố"],
+                    "khiêu vũ":["khiêu vũ","nhảy"],
+                    "nâng cấp":["nâng cấp","cải tiến"]}
+    # count = 0
+    if (token):
+        for key in look_up_dict.keys():
+            if token in look_up_dict[key]:
+                return key
+        return token
+    else:
+        return token
+
 def load_dict_values(dict_file):
     fin = open(dict_file, 'r', encoding='utf-8')
     lines = fin.readlines()
@@ -70,10 +111,13 @@ def search_in_database(user_token):
 
 def ranking_result(user_sent: str):
     values_dict = load_dict_values(DATA_TXT)
-    best_matching = find_best_matching_in_dict(user_sent, values_dict)
     user_tokens = word_tokenize(user_sent)
+    new_user_token = []
+    for item in user_tokens:
+        new_user_token.append(look_up_in_domain(item))
+    best_matching = find_best_matching_in_dict(user_sent, values_dict).capitalize()
     tmp = []
-    for token in user_tokens:
+    for token in new_user_token:
         tmp += search_in_database(token)
     unique_list = []
     dup_list = []
