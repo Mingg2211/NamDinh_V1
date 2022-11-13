@@ -7,7 +7,7 @@ from src.core.api.config import *
 
 def look_up_in_domain(token):
     look_up_dict = {"ô tô":["ô tô","oto"],
-                    "kết hôn":["kết hôn","cưới"],
+                    "kết hôn":["kết hôn","cưới","cưới xin","lấy vợ lấy chồng","kết duyên","thành hôn","thành thân","lấy vợ",'lấy chồng','cưới vợ','cưới chồng'],
                     "photocopy":["photocopy","photo"],
                     "di dời":["di dời","dời đi"],
                     "huy chương":["huy chương","huân chương"],
