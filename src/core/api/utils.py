@@ -86,7 +86,7 @@ def lcs(X, Y):
 
 def find_best_matching_in_dict(query, values_dict):
     query_words = query.lower().split()
-    max_ratio = 0
+    max_ratio = 0.2
     str_found = ""
     for words, v in values_dict:
         r = 1.0 * lcs(words, query_words) / len(words)
@@ -110,41 +110,50 @@ def search_in_database(user_token):
 
 
 def ranking_result(user_sent: str):
+#     values_dict = load_dict_values(DATA_TXT)
+#     user_tokens = word_tokenize(user_sent)
+#     new_user_token = []
+#     for item in user_tokens:
+#         new_user_token.append(look_up_in_domain(item))
+#     best_matching = find_best_matching_in_dict(user_sent, values_dict).capitalize()
+#     tmp = []
+#     for token in new_user_token:
+#         tmp += search_in_database(token)
+#     unique_list = []
+#     dup_list = []
+#     for element in tmp:
+#         if element not in unique_list:
+#             unique_list.append(element)
+#         else:
+#             dup_list.append(element)
+#     dup_list = remove_dup(dup_list)
+#     for element in dup_list:
+#         if element in unique_list:
+#             unique_list.remove(element)
+#     if len(dup_list) == 0:
+#         return unique_list[:3]
+#     elif len(dup_list) < 3:
+#         n = 3 - len(dup_list)
+#         if best_matching:
+#             result = [best_matching] + dup_list + unique_list[:10]
+#             result = remove_dup(result)
+#             return result[:3]
+#         else:
+#             result = dup_list + unique_list[:3-n]
+#             return result[:3]
+#     else:
+#         if best_matching in dup_list:
+#             result = [best_matching] + dup_list
+#             result = remove_dup(result)
+#             return result[:3]
+#         else:
+#             return dup_list[:3]
     values_dict = load_dict_values(DATA_TXT)
-    user_tokens = word_tokenize(user_sent)
-    new_user_token = []
-    for item in user_tokens:
-        new_user_token.append(look_up_in_domain(item))
-    best_matching = find_best_matching_in_dict(user_sent, values_dict).capitalize()
-    tmp = []
-    for token in new_user_token:
-        tmp += search_in_database(token)
-    unique_list = []
-    dup_list = []
-    for element in tmp:
-        if element not in unique_list:
-            unique_list.append(element)
-        else:
-            dup_list.append(element)
-    dup_list = remove_dup(dup_list)
-    for element in dup_list:
-        if element in unique_list:
-            unique_list.remove(element)
-    if len(dup_list) == 0:
-        return unique_list[:3]
-    elif len(dup_list) < 3:
-        n = 3 - len(dup_list)
-        if best_matching:
-            result = [best_matching] + dup_list + unique_list[:10]
-            result = remove_dup(result)
-            return result[:3]
-        else:
-            result = dup_list + unique_list[:3-n]
-            return result[:3]
-    else:
-        if best_matching in dup_list:
-            result = [best_matching] + dup_list
-            result = remove_dup(result)
-            return result[:3]
-        else:
-            return dup_list[:3]
+    best_sent =  find_best_matching_in_dict(user_sent, values_dict)
+    print(best_sent)
+    procedure_list = search_in_database(user_sent)
+    procedure_list = sorted(procedure_list, key=len)
+    if best_sent != "":
+        procedure_list.insert(-1,best_sent)
+    procedure_list = remove_dup(procedure_list)
+    return procedure_list[:3]
